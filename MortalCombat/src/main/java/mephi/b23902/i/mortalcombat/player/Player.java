@@ -2,21 +2,22 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package mortalkombatbversion;
+package mephi.b23902.i.mortalcombat.player;
 
-/**
- *
- * @author Мария
- */
+import javax.swing.ImageIcon;
+
 public class Player {
     
     private int level;
     private int health;
     private int maxhealth;
-    private int damage;
+    private double damage;
     private int attack;
+    public ImageIcon picture;
+    private boolean weakness = false;
+    private int timer = 0;
     
-    public Player(int level, int health, int damage, int attack){
+    public Player(int level, int health, double damage, int attack){
         this.level=level;
         this.health=health;
         this.damage=damage;
@@ -27,13 +28,18 @@ public class Player {
     public void setLevel(){
         this.level++;
     }
-    public void setHealth(int h){
-        this.health+=h;
+    public void setHealth(double h){
+        if (h < 0 && weakness){
+            this.health += h * 1.25;
+        }
+        else {
+            this.health+=h;
+        }
     }
     public void setNewHealth(int h){
         this.health=h;
     }
-    public void setDamage(int d){
+    public void setDamage(double d){
         this.damage+=d;
     }
     public void setAttack(int a){
@@ -49,7 +55,10 @@ public class Player {
     public int getHealth(){
         return this.health;
     }
-    public int getDamage(){
+    public double getDamage(){
+        if (weakness) {
+            return this.damage * 0.5;
+        }
         return this.damage;
     }
     public int getAttack(){
@@ -62,5 +71,26 @@ public class Player {
     public String getName(){
         return "";
     }
+    
+     public ImageIcon getPicture() {
+        return picture;
+    }
+     
+     public void setWeakness(int level) {
+         timer = level;
+         weakness = true;
+     }
+     
+     public void removeWeakness() {
+         if (timer > 0) timer--;
+         else {
+             weakness = false;
+         }
+         
+     }
+     
+     public Boolean isWizard() {
+         return false;
+     }
     
 }

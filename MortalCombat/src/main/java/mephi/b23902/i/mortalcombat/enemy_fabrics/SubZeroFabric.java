@@ -2,14 +2,12 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package mortalkombatbversion;
+package mephi.b23902.i.mortalcombat.enemy_fabrics;
+
+import mephi.b23902.i.mortalcombat.enemys.SubZero;
+import mephi.b23902.i.mortalcombat.player.Player;
 
 
-
-/**
- *
- * @author Мария
- */
 public class SubZeroFabric implements EnemyFabricInterface {
 
     @Override

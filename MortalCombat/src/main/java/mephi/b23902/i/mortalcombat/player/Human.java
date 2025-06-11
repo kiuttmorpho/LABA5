@@ -2,12 +2,8 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package mortalkombatbversion;
+package mephi.b23902.i.mortalcombat.player;
 
-/**
- *
- * @author Мария
- */
 public class Human extends Player{
     
 
@@ -24,6 +20,8 @@ public class Human extends Player{
         this.experience=0;
         this.nextexperience=40;
         this.win=0;
+        //picture = new ImageIcon(this.getClass().getResource("/Player.png"));
+        
     }
     
 

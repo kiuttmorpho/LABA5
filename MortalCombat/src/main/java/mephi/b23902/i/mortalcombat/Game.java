@@ -2,9 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package mortalkombatbversion;
+package mephi.b23902.i.mortalcombat;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,14 +15,16 @@ import javax.swing.JProgressBar;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
+import mephi.b23902.i.mortalcombat.fight.ChangeTexts;
+import mephi.b23902.i.mortalcombat.fight.CharacterAction;
+import mephi.b23902.i.mortalcombat.fight.Fight;
+import mephi.b23902.i.mortalcombat.player.Human;
+import mephi.b23902.i.mortalcombat.player.Player;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-/**
- *
- * @author Мария
- */
+
 public class Game {
 
     CharacterAction action = new CharacterAction();
@@ -35,13 +38,15 @@ public class Game {
         Player enemy = action.ChooseEnemy(L1, L2, L3, L4);
         action.HP(enemy, pr2);
         pr2.setMaximum(enemy.getMaxHealth());
+        fight.setEnemy(enemy);
         return enemy;
     }
     
     public Human NewHuman(JProgressBar pr1){
-        Human human = new Human (0,80,16,1);
+        Human human = new Human (1,80,16,1);
         action.HP(human, pr1);
         pr1.setMaximum(human.getMaxHealth());
+        fight.setHuman(human);
         return human;
     }
 
@@ -50,6 +55,7 @@ public class Game {
         results.sort(Comparator.comparing(Result::getPoints).reversed());
         WriteToTable(table);
         WriteToExcel();
+        this.fight.resetCurrentLocationsCount();
     }
     
     public void WriteToExcel() throws IOException{
@@ -67,21 +73,29 @@ public class Game {
                 r2.createCell(2).setCellValue(results.get(i).getPoints());
             }
         }
-        File f = new File("C:\\Users\\Мария\\Desktop\\Results.xlsx");
+        File f = new File("Results.xlsx");
         book.write(new FileOutputStream(f));
-        book.close();
+        
     }
     
+    public Fight getFight() {
+        return fight;
+    }
+    
+
     public ArrayList<Result> getResults(){
         return this.results;
     }
 
     public void ReadFromExcel() throws IOException{
-        XSSFWorkbook book = new XSSFWorkbook("C:\\Users\\Мария\\Desktop\\Results.xlsx");
+        FileInputStream inputStream = new FileInputStream(new  File("Results.xlsx"));
+        XSSFWorkbook book = new XSSFWorkbook(inputStream);
         XSSFSheet sh = book.getSheetAt(0);
         for (int i=1; i<=sh.getLastRowNum();i++) {
             results.add(new Result(sh.getRow(i).getCell(1).getStringCellValue(),(int)sh.getRow(i).getCell(2).getNumericCellValue()));
         }
+       
+        inputStream.close();
     }
     
     public void WriteToTable(JTable table){

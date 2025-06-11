@@ -2,11 +2,14 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package mortalkombatbversion;
+package mephi.b23902.i.mortalcombat.fight;
 
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 import javax.swing.JRadioButton;
+import mephi.b23902.i.mortalcombat.player.Human;
+import mephi.b23902.i.mortalcombat.player.Items;
+import mephi.b23902.i.mortalcombat.player.Player;
 
 /**
  *
@@ -26,16 +29,13 @@ public class ChangeTexts {
         label4.setText(Integer.toString(enemy.getLevel()) + " level");
         label5.setText(Integer.toString(human.getMaxHealth()) + "/" + Integer.toString(human.getMaxHealth()));
         label6.setText(Integer.toString(enemy.getMaxHealth()) + "/" + Integer.toString(enemy.getMaxHealth()));
-        label7.setText(Integer.toString(human.getDamage()));
+        label7.setText(Double.toString(human.getDamage()));
         if (i % 2 == 1) {
             label8.setText("Your turn");
         }
         else{
             label8.setText(enemy.getName()+"'s turn");
         }
-        /*rb1.setText(items[0].getName()+", "+items[0].getCount()+" шт");
-        rb2.setText(items[1].getName()+", "+items[1].getCount()+" шт");
-        rb3.setText(items[2].getName()+", "+items[2].getCount()+" шт");*/
         BagText(items, rb1, rb2, rb3);
         label9.setText("");
     }

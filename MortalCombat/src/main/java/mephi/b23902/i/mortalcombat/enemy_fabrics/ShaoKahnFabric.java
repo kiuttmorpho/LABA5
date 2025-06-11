@@ -2,12 +2,12 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package mortalkombatbversion;
+package mephi.b23902.i.mortalcombat.enemy_fabrics;
 
-/**
- *
- * @author Мария
- */
+import mephi.b23902.i.mortalcombat.enemys.ShaoKahn;
+import mephi.b23902.i.mortalcombat.player.Player;
+
+
 public class ShaoKahnFabric implements EnemyFabricInterface{
     
     @Override

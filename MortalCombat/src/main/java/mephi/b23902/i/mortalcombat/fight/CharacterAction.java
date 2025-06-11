@@ -2,20 +2,26 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package mortalkombatbversion;
+package mephi.b23902.i.mortalcombat.fight;
 
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
+import mephi.b23902.i.mortalcombat.enemy_fabrics.EnemyFabric;
+import mephi.b23902.i.mortalcombat.enemys.Baraka;
+import mephi.b23902.i.mortalcombat.enemys.LiuKang;
+import mephi.b23902.i.mortalcombat.enemys.ShaoKahn;
+import mephi.b23902.i.mortalcombat.enemys.SonyaBlade;
+import mephi.b23902.i.mortalcombat.enemys.SubZero;
+import mephi.b23902.i.mortalcombat.player.Human;
+import mephi.b23902.i.mortalcombat.player.Items;
+import mephi.b23902.i.mortalcombat.player.Player;
 
-/**
- *
- * @author Мария
- */
 public class CharacterAction {
 
-    private final int experience_for_next_level[] = {40, 90, 180, 260, 410, 1000};
+    private  int experience_for_next_level = 40;
+    
 
     private final int kind_fight[][] = {{1, 0}, {1, 1, 0}, {0, 1, 0}, {1, 1, 1, 1}};
 
@@ -44,50 +50,43 @@ public class CharacterAction {
         switch (i) {
             case 0:
                 enemyy = enemyes[0];
-                icon1 = new ImageIcon("C:\\Users\\Мария\\Desktop\\Baraka.jpg");
-                label2.setText("Baraka (танк)");
                 break;
             case 1:
                 enemyy = enemyes[1];
-                icon1 = new ImageIcon("C:\\Users\\Мария\\Desktop\\Sub-Zero.jpg");
-                label2.setText("Sub-Zero (маг)");
                 break;
             case 2:
                 enemyy = enemyes[2];
-                icon1 = new ImageIcon("C:\\Users\\Мария\\Desktop\\Liu Kang.jpg");
-                label2.setText("Liu Kang (боец)");
                 break;
             case 3:
                 enemyy = enemyes[3];
-                icon1 = new ImageIcon("C:\\Users\\Мария\\Desktop\\Sonya Blade.jpg");
-                label2.setText("Sonya Blade (солдат)");
+
                 break;
         }
-        label.setIcon(icon1);
-        text.setText(Integer.toString(enemyy.getDamage()));
+        label.setIcon(enemyy.getPicture());
+        label2.setText(enemyy.getName());
+        text.setText(String.valueOf(enemyy.getDamage()));
         label3.setText(Integer.toString(enemyy.getHealth()) + "/" + Integer.toString(enemyy.getMaxHealth()));
         return enemyy;
     }
 
-    public Player ChooseBoss(JLabel label, JLabel label2, JLabel text, JLabel label3, int i) {
-        ImageIcon icon1 = null;
-        icon1 = new ImageIcon("C:\\Users\\Мария\\Desktop\\Shao Kahn.png");
-        label2.setText("Shao Kahn (босс)");
-        switch (i) {
-            case 2:
-                enemyy = enemyes[4];
-                break;
-            case 4:
-                enemyy = enemyes[5];
-                break;
+    public Player ChooseBoss(JLabel label, JLabel label2, JLabel text, JLabel label3, int i, Player human) {
+
+        label2.setText("Shao Kahn - БОСС");
+        enemyy = enemyes[4];
+        for(int j=0; j<human.getLevel() - enemyy.getLevel() + 2; i++) {
+            enemyy.setLevel();
         }
-        label.setIcon(icon1);
-        text.setText(Integer.toString(enemyy.getDamage()));
+        enemyy.setDamage( enemyy.getLevel());
+        enemyy.setMaxHealth(5 * enemyy.getLevel());
+        enemyy.setHealth(enemyy.getMaxHealth() - enemyy.getHealth());
+        System.out.println("health: " + enemyy.getHealth());
+        label.setIcon(enemyy.getPicture());
+        text.setText(String.valueOf(enemyy.getDamage()));
         label3.setText(Integer.toString(enemyy.getHealth()) + "/" + Integer.toString(enemyy.getMaxHealth()));
         return enemyy;
     }
 
-    public int[] EnemyBehavior(int k1, int k2, int k3, int k4, double i) {
+    public int[] EnemyBehavior(int k1, int k2, int k3, int k4, double i, Boolean isWizard) {
         int arr[] = null;
         if (i < k1 * 0.01) {
             arr = kind_fight[0];
@@ -108,19 +107,19 @@ public class CharacterAction {
         int arr[] = null;
         double i = Math.random();
         if (enemy instanceof Baraka) {
-            arr = action.EnemyBehavior(15, 15, 60, 10, i);
+            arr = action.EnemyBehavior(15, 15, 60, 10, i, false);
         }
         if (enemy instanceof SubZero) {
-            arr = action.EnemyBehavior(25, 25, 0, 50, i);
+            arr = action.EnemyBehavior(25, 25, 0, 50, i, true);
         }
         if (enemy instanceof LiuKang) {
-            arr = action.EnemyBehavior(13, 13, 10, 64, i);
+            arr = action.EnemyBehavior(13, 13, 10, 64, i, false);
         }
         if (enemy instanceof SonyaBlade) {
-            arr = action.EnemyBehavior(25, 25, 50, 0, i);
+            arr = action.EnemyBehavior(25, 25, 50, 0, i, false);
         }
         if (enemy instanceof ShaoKahn) {
-            arr = action.EnemyBehavior(10, 45, 0, 45, i);
+            arr = action.EnemyBehavior(10, 45, 0, 45, i, false);
         }
         return arr;
     }
@@ -133,8 +132,12 @@ public class CharacterAction {
             progress.setValue(0);
         }
     }
+    
+    public void useWeakness() {
+        
+    }
 
-    public void AddPoints(Human human, Player[] enemyes) {
+    public Boolean AddPoints(Human human, Player[] enemyes) {
         switch (human.getLevel()) {
             case 0:
                 human.setExperience(20);
@@ -157,16 +160,23 @@ public class CharacterAction {
                 human.setPoints(55 + human.getHealth() / 4);
                 break;
         }
-        for (int i = 0; i < 5; i++) {
-            if (experience_for_next_level[i] == human.getExperience()) {
+        Boolean isLevelUp = false;
+            System.out.println(experience_for_next_level + " и " +  human.getExperience());
+            
+            if (experience_for_next_level <= human.getExperience()) {   
+                
                 human.setLevel();
-                human.setNextExperience(experience_for_next_level[i + 1]);
+                isLevelUp = true;
+                experience_for_next_level += human.getExperience();
+                human.setNextExperience(experience_for_next_level);
                 NewHealthHuman(human);
                 for (int j = 0; j < 4; j++) {
                     NewHealthEnemy(enemyes[j], human);
                 }
+                
             }
-        }
+        
+        return isLevelUp;
     }
 
     public void AddPointsBoss(Human human, Player[] enemyes) {
@@ -180,16 +190,17 @@ public class CharacterAction {
                 human.setPoints(65 + human.getHealth() / 2);
                 break;
         }
-        for (int i = 0; i < 5; i++) {
-            if (experience_for_next_level[i] == human.getExperience()) {
+            if (experience_for_next_level <= human.getExperience()) {
                 human.setLevel();
-                human.setNextExperience(experience_for_next_level[i + 1]);
+                
+                experience_for_next_level += human.getExperience();
+                human.setNextExperience(experience_for_next_level);
                 NewHealthHuman(human);
                 for (int j = 0; j < 4; j++) {
                     NewHealthEnemy(enemyes[j], human);
                 }
             }
-        }
+        
     }
 
     public void AddItems(int k1, int k2, int k3, Items[] items) {
