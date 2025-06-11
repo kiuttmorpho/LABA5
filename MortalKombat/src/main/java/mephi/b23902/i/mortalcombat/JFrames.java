@@ -16,7 +16,10 @@ import mephi.b23902.i.mortalcombat.player.Items;
 import mephi.b23902.i.mortalcombat.player.Player;
 
 
-
+/**
+ *
+ * @author Мария
+ */
 public class JFrames extends javax.swing.JFrame {
     
     Game game = new Game();

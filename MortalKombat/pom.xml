@@ -9,7 +9,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>22</maven.compiler.source>
         <maven.compiler.target>22</maven.compiler.target>
-        <exec.mainClass>mephi.b23902.i.mortalcombat.MortalCombat</exec.mainClass>
+        <exec.mainClass>mephi.b23902.i.mortalcombat.MortalKombat</exec.mainClass>
     </properties>
     
     <dependencies>
@@ -67,7 +67,7 @@
                         <configuration>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>mephi.b23902.i.mortalcombat.MortalCombat</mainClass>
+                                    <mainClass>mephi.b23902.i.mortalcombat.MortalKombat</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>
