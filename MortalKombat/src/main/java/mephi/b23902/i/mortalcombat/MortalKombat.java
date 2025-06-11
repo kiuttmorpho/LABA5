@@ -5,7 +5,7 @@
 package mephi.b23902.i.mortalcombat;
 
 
-public class MortalCombat {
+public class MortalKombat {
 
     public static void main(String[] args) {
         JFrames app = new JFrames();
