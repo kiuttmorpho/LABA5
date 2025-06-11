@@ -5,12 +5,13 @@
 package mephi.b23902.i.mortalcombat.enemys;
 
 import mephi.b23902.i.mortalcombat.player.Player;
-
+import javax.swing.ImageIcon;
 
 public class Baraka extends Player{
     
     public Baraka(int level, int health, int  damage, int attack){
         super (level, health, damage, attack);
+        picture = new ImageIcon(this.getClass().getResource("/Baraka.png"));
     }
     
     @Override
