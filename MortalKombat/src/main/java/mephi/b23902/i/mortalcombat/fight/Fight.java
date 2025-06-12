@@ -1,11 +1,9 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package mephi.b23902.i.mortalcombat.fight;
 
-//ADD IMAGE!!!
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.BiConsumer;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -23,143 +21,210 @@ public class Fight {
 
     private Player human;
     private Player enemy;
-    private ChangeTexts change = new ChangeTexts();
-    private int kind_attack[] = {0};
-    private int experiences[] = {40, 90, 180, 260, 410};
-    private EnemyFabric fabric = new EnemyFabric();
+    private final ChangeTexts change = new ChangeTexts();
+    private int[] kind_attack = {0};
+    private final int[] experiences = {40, 90, 180, 260, 410};
+    private final EnemyFabric fabric = new EnemyFabric();
     public int i = 1;
     private int k = -1;
     private int stun = 0;
     private double v = 0.0;
-    
+
     private int locationsCount;
     private int currentLocationsCount = 0;
-    private int levelCount;
-    private int currentLevelCount;
+    private int levelCount; // Количество врагов в текущей локации
+    
+    // Карта для хранения обработчиков всех возможных ходов
+    private final Map<String, BiConsumer<Player, Player>> moveHandlers;
+    private JLabel labelEffectP1;
+    private JLabel labelEffectP2;
 
-    public void Move(Player p1, Player p2, JLabel l, JLabel l2) {
-        if (stun == 1) {
-            p1.setAttack(-1);
-        }
-        System.out.println(p1.getAttack() + " || " + p2.getAttack());
-        switch (Integer.toString(p1.getAttack()) + Integer.toString(p2.getAttack())) {
-            case "10":
-                v = Math.random();
-                if (p1 instanceof ShaoKahn & v < 0.15) {
-                    p2.setHealth(-(int) (p1.getDamage() * 0.5));
-                    l2.setText("Your block is broken");
+    public Fight() {
+        this.moveHandlers = new HashMap<>();
+        initializeMoveHandlers();
+    }
+    
+    /**
+     * Инициализирует карту всех возможных взаимодействий в бою.
+     * Каждое взаимодействие - это лямбда-выражение, принимающее атакующего (p1) и защищающегося (p2).
+     */
+    private void initializeMoveHandlers() {
+        // Атака(1) vs Защита(0) -> "10"
+        moveHandlers.put("10", (p1, p2) -> {
+            v = Math.random();
+            if (p1 instanceof ShaoKahn && v < 0.15) {
+                p2.setHealth(-(int) (p1.getDamage() * 0.5));
+                labelEffectP2.setText("Your block is broken");
+            } else {
+                p1.setHealth(-(int) (p2.getDamage() * 0.5));
+                labelEffectP2.setText(p2.getName() + " counterattacked");
+            }
+        });
 
-                } else {
-                    p1.setHealth(-(int) (p2.getDamage() * 0.5));
-                    l2.setText(p2.getName() + " counterattacked");
-                }
-                break;
-                
-            case "11":
-                p2.setHealth(-p1.getDamage());
-                l2.setText(p1.getName() + " attacked");
-                break;
-                
-            case "00":
-                v = Math.random();
-                if (v <= 0.5) {
-                    stun = 1;
-                }
-                l2.setText("Both defended themselves");
-                break;
-                
-            case "01":
-                l2.setText(p1.getName() + " didn't attacked");
-                break;
-                
-            case "-10":
-                l.setText(p1.getName() + " was stunned");
-                stun = 0;
-                l2.setText(p2.getName() + " didn't attacked");
-                break;
-                
-            case "-11":
-                p1.setHealth(-p2.getDamage());
-                l.setText(p1.getName() + " was stunned");
-                stun = 0;
-                l2.setText(p2.getName() + " attacked");
-                break;
-                
-            case "20":
-            case  "2-1":
-                    if (Math.random() < 0.75){
-                            p2.setWeakness(p2.getLevel());
-                            l.setText(p1.getName() + "used Weakness");
-                            l2.setText(p2.getName() + " are weakened");}
-                    break;
-                    
-            case "02" :
-            case "-12":
-                 if (Math.random() < 0.75){
-                        p1.setWeakness(p1.getLevel());
-                        l2.setText(p2.getName() + "used Weakness");
-                        l.setText(p1.getName() + " are weakened"); }
-                 break;
-                 
-            case "12":
-                       p2.setHealth(-p1.getDamage() * 1.15);
-                        l.setText(p1.getName() + " attacked");
-                        l2.setText("Failed to weak oppponent");
-                    break;
-                    
-            case "21":
-                     p1.setHealth(-p2.getDamage() * 1.15);
-                        l.setText(p1.getName() + " attacked");
-                        l.setText("Failed to weak oppponent");
-                     break;
-                     
-            case  "30" :
-            case  "3-1":
-              p1.setHealth((p1.getMaxHealth()-p1.getHealth())*0.5);
-                l.setText( p1.getName() + " regenerated");
-                break;
-                
-           case  "03" :
-           case  "-13":     
-                p2.setHealth((p2.getMaxHealth()-p2.getHealth())* 0.5);
-                l2.setText( p2.getName() + " regenerated");
-                break;
-                
-           case "13":
-               p2.setHealth(-p1.getDamage() * 2);
-                l.setText(p1.getName() + " attacked");
-                l2.setText("Failed to regenerate");
-                break;
-                
-           case "31":
-                p1.setHealth(-p2.getDamage() * 2);
-                l2.setText(p2.getName() + " attacked");
-                l.setText("Failed to regenerate");
-                break;
-                
-           case "23":
-               p2.setWeakness(p1.getLevel());
-              p2.setHealth((p2.getMaxHealth()-p2.getHealth())* 0.5);
-               l.setText(p1.getName() + " used Weakness");
-               l2.setText(p2.getName() + " regenerated");
-               break;
-               
-           case  "32":
-               p1.setWeakness(p2.getLevel());
-               p1.setHealth((p1.getMaxHealth()-p1.getHealth())*0.5);
-               l2.setText(p2.getName() + " used Weakness");
-               l.setText(p1.getName() + "regenerated");
-               break;
-        }
+        // Атака(1) vs Атака(1) -> "11"
+        moveHandlers.put("11", (p1, p2) -> {
+            p2.setHealth(-p1.getDamage());
+            labelEffectP2.setText(p1.getName() + " attacked");
+        });
+
+        // Защита(0) vs Защита(0) -> "00"
+        moveHandlers.put("00", (p1, p2) -> {
+            v = Math.random();
+            if (v <= 0.5) {
+                stun = 1; // Стан получает тот, чей ход следующий
+            }
+            labelEffectP2.setText("Both defended themselves");
+        });
+
+        // Защита(0) vs Атака(1) -> "01"
+        moveHandlers.put("01", (p1, p2) -> labelEffectP2.setText(p1.getName() + " didn't attack"));
+
+        // Стан(-1) vs Защита(0) -> "-10"
+        moveHandlers.put("-10", (p1, p2) -> {
+            labelEffectP1.setText(p1.getName() + " was stunned");
+            stun = 0;
+            labelEffectP2.setText(p2.getName() + " didn't attack");
+        });
+
+        // Стан(-1) vs Атака(1) -> "-11"
+        moveHandlers.put("-11", (p1, p2) -> {
+            p1.setHealth(-p2.getDamage());
+            labelEffectP1.setText(p1.getName() + " was stunned");
+            stun = 0;
+            labelEffectP2.setText(p2.getName() + " attacked");
+        });
+
+        // Ослабление(2) vs Защита(0) -> "20"
+        BiConsumer<Player, Player> weakenVsDefend = (p1, p2) -> {
+            if (Math.random() < 0.75) {
+                p2.setWeakness(p1.getLevel());
+                labelEffectP1.setText(p1.getName() + " used Weakness");
+                labelEffectP2.setText(p2.getName() + " is weakened");
+            } else {
+                labelEffectP1.setText(p1.getName() + " tried to weaken, but failed!");
+            }
+        };
+        moveHandlers.put("20", weakenVsDefend);
+        moveHandlers.put("2-1", weakenVsDefend); // Дублируем для case "2-1"
+
+        // Атака(1) vs Ослабление(2) -> "12"
+        moveHandlers.put("12", (p1, p2) -> {
+            p2.setHealth(-p1.getDamage() * 1.15);
+            labelEffectP1.setText(p1.getName() + " attacked");
+            labelEffectP2.setText("Failed to weak opponent");
+        });
         
+        // Ослабление(2) vs Атака(1) -> "21"
+        moveHandlers.put("21", (p1, p2) -> {
+            p1.setHealth(-p2.getDamage() * 1.15);
+            labelEffectP1.setText(p1.getName() + " attacked");
+            labelEffectP2.setText("Failed to weak opponent");
+        });
+        
+        // Регенерация(3) vs Защита(0) -> "30"
+        BiConsumer<Player, Player> regenVsDefend = (p1, p2) -> {
+            p1.setHealth((p1.getMaxHealth() - p1.getHealth()) * 0.5);
+            labelEffectP1.setText(p1.getName() + " regenerated");
+        };
+        moveHandlers.put("30", regenVsDefend);
+        moveHandlers.put("3-1", regenVsDefend); // Дублируем для case "3-1"
+        
+        // Атака(1) vs Регенерация(3) -> "13"
+        moveHandlers.put("13", (p1, p2) -> {
+            p2.setHealth(-p1.getDamage() * 2);
+            labelEffectP1.setText(p1.getName() + " attacked");
+            labelEffectP2.setText("Failed to regenerate");
+        });
+
+        // Регенерация(3) vs Атака(1) -> "31"
+        moveHandlers.put("31", (p1, p2) -> {
+            p1.setHealth(-p2.getDamage() * 2);
+            labelEffectP2.setText(p2.getName() + " attacked");
+            labelEffectP1.setText("Failed to regenerate");
+        });
+
+        // Ослабление(2) vs Регенерация(3) -> "23"
+        moveHandlers.put("23", (p1, p2) -> {
+            p2.setWeakness(p1.getLevel());
+            p2.setHealth((p2.getMaxHealth() - p2.getHealth()) * 0.5);
+            labelEffectP1.setText(p1.getName() + " used Weakness");
+            labelEffectP2.setText(p2.getName() + " regenerated");
+        });
+        
+        // Регенерация(3) vs Ослабление(2) -> "32"
+        moveHandlers.put("32", (p1, p2) -> {
+            p1.setWeakness(p2.getLevel());
+            p1.setHealth((p1.getMaxHealth() - p1.getHealth()) * 0.5);
+            labelEffectP2.setText(p2.getName() + " used Weakness");
+            labelEffectP1.setText(p1.getName() + " regenerated");
+        });
+        
+        // Защита(0) vs Ослабление(2) -> "02"
+        moveHandlers.put("02", (p1, p2) -> {
+            if (Math.random() < 0.75) {
+                p1.setWeakness(p1.getLevel());
+                labelEffectP2.setText(p2.getName() + " used Weakness");
+                labelEffectP1.setText(p1.getName() + " is weakened");
+            }
+        });
+        
+        // Стан(-1) vs Ослабление(2) -> "-12"
+        moveHandlers.put("-12", (p1, p2) -> {
+             if (Math.random() < 0.75) {
+                p1.setWeakness(p1.getLevel());
+                labelEffectP2.setText(p2.getName() + " used Weakness");
+                labelEffectP1.setText(p1.getName() + " is weakened");
+            }
+        });
+        
+        // Защита(0) vs Регенерация(3) -> "03"
+        moveHandlers.put("03", (p1, p2) -> {
+            p2.setHealth((p2.getMaxHealth() - p2.getHealth()) * 0.5);
+            labelEffectP2.setText(p2.getName() + " regenerated");
+        });
+        
+        // Стан(-1) vs Регенерация(3) -> "-13"
+        moveHandlers.put("-13", (p1, p2) -> {
+             p2.setHealth((p2.getMaxHealth() - p2.getHealth()) * 0.5);
+             labelEffectP2.setText(p2.getName() + " regenerated");
+        });
     }
 
-    public void Hit(Player human, Player enemy, int a, JLabel label,
-            JLabel label2, JDialog dialog, JLabel label3, CharacterAction action,
-            JProgressBar pr1, JProgressBar pr2, JDialog dialog1,
-            JDialog dialog2, JFrame frame, ArrayList<Result> results,
-            JLabel label4, JLabel label5, JLabel label6, JLabel label7,
-            JLabel label8, Items[] items, JRadioButton rb,  JComboBox optionBox, JLabel newLevelLabel ) {
+    /**
+     * Основной метод, обрабатывающий взаимодействие двух игроков за один ход.
+     * @param p1 Игрок, который делает ход (атакующий)
+     * @param p2 Игрок, который реагирует на ход (защищающийся)
+     * @param l Метка для вывода эффектов на p1
+     * @param l2 Метка для вывода эффектов на p2
+     */
+    public void Move(Player p1, Player p2, JLabel l, JLabel l2) {
+        if (stun == 1) {
+            p1.setAttack(-1); // Накладываем стан на того, кто ходит сейчас
+        }
+
+        this.labelEffectP1 = l;
+        this.labelEffectP2 = l2;
+        l.setText("");
+        l2.setText("");
+
+        String moveKey = Integer.toString(p1.getAttack()) + Integer.toString(p2.getAttack());
+
+        // Находим нужный обработчик в карте и выполняем его.
+        // getOrDefault() безопасно вернет "пустой" обработчик, если комбинация не найдена.
+        BiConsumer<Player, Player> handler = moveHandlers.getOrDefault(moveKey, (attacker, defender) -> {
+            System.err.println("Warning: Unknown move combination: " + moveKey);
+        });
+
+        handler.accept(p1, p2);
+    }
+    
+    /**
+     * Точка входа для обработки хода. Определяет действия игроков и вызывает Move.
+     */
+    public void Hit(Player human, Player enemy, int a, JLabel label, JLabel label2, JDialog dialog, JLabel label3, CharacterAction action,
+            JProgressBar pr1, JProgressBar pr2, JDialog dialog1, JDialog dialog2, JFrame frame, ArrayList<Result> results,
+            JLabel label4, JLabel label5, JLabel label6, JLabel label7, JLabel label8, Items[] items, JRadioButton rb, JComboBox optionBox, JLabel newLevelLabel) {
+        
         label7.setText("");
         human.setAttack(a);
 
@@ -169,28 +234,30 @@ public class Fight {
             kind_attack = action.ChooseBehavior(enemy, action);
             k = 0;
         }
-        
-        if (enemy.isWizard() && Math.random() < 0.15){
+
+        if (enemy.isWizard() && Math.random() < 0.15) {
             enemy.setAttack(2); // 2 - ОСЛАБЛЕНИЕ
-        }
-        else if (enemy.getName().equals("Shao Kahn") && Math.random() < 0.2) {
+        } else if (enemy.getName().equals("Shao Kahn") && Math.random() < 0.2) {
             enemy.setAttack(3); // 3 - РЕГЕНЕРАЦИЯ
-        }
-        else{
+        } else {
             enemy.setAttack(kind_attack[k]);
         }
+
         human.removeWeakness();
         enemy.removeWeakness();
+
         if (i % 2 == 1) {
             Move(human, enemy, label7, label8);
         } else {
-            Move(enemy, human, label7, label8);
+            Move(enemy, human, label8, label7);
         }
+
         i++;
         change.RoundTexts(human, enemy, label, label2, i, label6);
         action.HP(human, pr1);
         action.HP(enemy, pr2);
-        if (human.getHealth() <= 0 & items[2].getCount() > 0) {
+
+        if (human.getHealth() <= 0 && items[2].getCount() > 0) {
             human.setNewHealth((int) (human.getMaxHealth() * 0.05));
             items[2].setCount(-1);
             action.HP(human, pr1);
@@ -198,82 +265,73 @@ public class Fight {
             rb.setText(items[2].getName() + ", " + items[2].getCount() + " шт");
             label7.setText("Вы воскресли");
         }
-       
-        
-        if (human.getHealth() <= 0 | enemy.getHealth() <= 0) {
-            if (levelCount == 0 || human.getHealth()<=0) {
-                EndFinalRound(((Human) human), action, results, dialog1, dialog2,
-                        frame, label4, label5, items);
-                
+
+        if (human.getHealth() <= 0 || enemy.getHealth() <= 0) {
+            if (levelCount == 0 || human.getHealth() <= 0) {
+                EndFinalRound((Human) human, action, results, dialog1, dialog2, frame, label4, label5, items);
             } else {
-                EndRound(human, enemy, dialog, label3, action, items,  optionBox, newLevelLabel );
+                EndRound(human, enemy, dialog, label3, action, items, optionBox, newLevelLabel);
             }
         }
     }
 
     public void EndRound(Player human, Player enemy, JDialog dialog, JLabel label,
-            CharacterAction action, Items[] items, JComboBox optionBox, JLabel newLevelLabel ) {
+            CharacterAction action, Items[] items, JComboBox optionBox, JLabel newLevelLabel) {
 
         dialog.setVisible(true);
         dialog.setBounds(300, 150, 700, 600);
+
         if (human.getHealth() > 0) {
-            
             label.setText("You win");
             ((Human) human).setWin();
 
             if (enemy instanceof ShaoKahn) {
                 action.AddItems(38, 23, 8, items);
                 action.AddPointsBoss(((Human) human), action.getEnemyes());
-                
             } else {
                 action.AddItems(25, 15, 5, items);
-                Boolean isLevelUp = action.AddPoints(((Human) human), action.getEnemyes());
+                boolean isLevelUp = action.AddPoints(((Human) human), action.getEnemyes());
                 if (isLevelUp) {
                     optionBox.setSelectedIndex(0);
                     optionBox.setVisible(true);
                     newLevelLabel.setVisible(true);
-                    
                 }
-                
             }
         } else {
             label.setText(enemy.getName() + " win");
         }
-
         i = 1;
         k = -1;
         kind_attack = ResetAttack();
-        
-
     }
-
+    
     public void EndFinalRound(Human human, CharacterAction action,
             ArrayList<Result> results, JDialog dialog1, JDialog dialog2, JFrame frame,
             JLabel label1, JLabel label2, Items[] items) {
         String text = "Победа не на вашей стороне";
-         
+
         if (human.getHealth() > 0) {
             human.setWin();
             action.AddPoints(human, action.getEnemyes());
             text = "Победа на вашей стороне";
         }
-         boolean top = false;
-        if (results == null) {
+        
+        boolean top = false;
+        if (results == null || results.isEmpty()) {
             top = true;
         } else {
-            int i = 0;
-            for (int j = 0; j < results.size(); j++) {
-                if (human.getPoints() < results.get(j).getPoints()) {
-                    i++;
+            int betterPlayersCount = 0;
+            for (Result result : results) {
+                if (human.getPoints() < result.getPoints()) {
+                    betterPlayersCount++;
                 }
             }
-            if (i < 10) {
+            if (betterPlayersCount < 10) {
                 top = true;
             }
         }
-        
-      
-            if (top) {
+
+        if (top) {
             dialog1.setVisible(true);
             dialog1.setBounds(150, 150, 600, 500);
             label1.setText(text);
@@ -283,32 +341,19 @@ public class Fight {
             label2.setText(text);
         }
         frame.dispose();
-        }
-        
-            
-        
-        
-       
-        
-    
-
-    public int[] ResetAttack() {
-        int a[] = {0};
-        return a;
     }
 
     public Player NewRound(Player human, JLabel label, JProgressBar pr1,
             JProgressBar pr2, JLabel label2, JLabel text, JLabel label3, CharacterAction action) {
+        
         this.human = human;
         
-        Player enemy1 = null;
         if (levelCount == 1) {
             enemy = action.ChooseBoss(label, label2, text, label3, human.getLevel(), human);
         } else if (levelCount > 1) {
-            
             enemy = action.ChooseEnemy(label, label2, text, label3);
-            
         }
+
         levelCount--;
         pr1.setMaximum(human.getMaxHealth());
         pr2.setMaximum(enemy.getMaxHealth());
@@ -316,44 +361,41 @@ public class Fight {
         enemy.setNewHealth(enemy.getMaxHealth());
         action.HP(human, pr1);
         action.HP(enemy, pr2);
-        
-        if(levelCount == 0) prepareLocationAndRounds();
-        
-        
-        
-        
+
+        if (levelCount == 0) {
+            prepareLocationAndRounds();
+        }
         return enemy;
     }
-    
-    
 
+    public int[] ResetAttack() {
+        return new int[]{0};
+    }
+    
     public void prepareLocationAndRounds() {
         if (currentLocationsCount < locationsCount) {
-            
             currentLocationsCount++;
-            levelCount = (int) (Math.random()*3) + human.getLevel() + 1;
-           
-             
+            // Количество врагов в локации зависит от уровня игрока
+            levelCount = (int) (Math.random() * 3) + human.getLevel() + 1;
         }
-
     }
 
     public int getCurrentLocationsCount() {
         return currentLocationsCount;
     }
-    public void resetCurrentLocationsCount(){
+
+    public void resetCurrentLocationsCount() {
         this.currentLocationsCount = 0;
     }
-    
-    
+
     public void setLocationsCount(int locationsCount) {
         this.locationsCount = locationsCount;
     }
-    
+
     public void setHuman(Human human) {
         this.human = human;
     }
-    
+
     public void setEnemy(Player enemy) {
         this.enemy = enemy;
     }
