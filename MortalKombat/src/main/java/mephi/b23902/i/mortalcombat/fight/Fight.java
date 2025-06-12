@@ -32,7 +32,7 @@ public class Fight {
 
     private int locationsCount;
     private int currentLocationsCount = 0;
-    private int levelCount; // Количество врагов в текущей локации
+    private int levelCount;
     
     // Карта для хранения обработчиков всех возможных ходов
     private final Map<String, BiConsumer<Player, Player>> moveHandlers;
@@ -49,7 +49,7 @@ public class Fight {
      * Каждое взаимодействие - это лямбда-выражение, принимающее атакующего (p1) и защищающегося (p2).
      */
     private void initializeMoveHandlers() {
-        // Атака(1) vs Защита(0) -> "10"
+        // Атака vs Защита -> "10"
         moveHandlers.put("10", (p1, p2) -> {
             randomChanceValue = Math.random();
             if (p1 instanceof ShaoKahn && randomChanceValue < 0.15) {
@@ -61,13 +61,13 @@ public class Fight {
             }
         });
 
-        // Атака(1) vs Атака(1) -> "11"
+        // Атака vs Атака -> "11"
         moveHandlers.put("11", (p1, p2) -> {
             p2.setHealth(-p1.getDamage());
             labelEffectP2.setText(p1.getName() + " attacked");
         });
 
-        // Защита(0) vs Защита(0) -> "00"
+        // Защита vs Защита -> "00"
         moveHandlers.put("00", (p1, p2) -> {
             randomChanceValue = Math.random();
             if (randomChanceValue <= 0.5) {
@@ -76,17 +76,17 @@ public class Fight {
             labelEffectP2.setText("Both defended themselves");
         });
 
-        // Защита(0) vs Атака(1) -> "01"
+        // Защита vs Атака -> "01"
         moveHandlers.put("01", (p1, p2) -> labelEffectP2.setText(p1.getName() + " didn't attack"));
 
-        // Стан(-1) vs Защита(0) -> "-10"
+        // Стан vs Защита -> "-10"
         moveHandlers.put("-10", (p1, p2) -> {
             labelEffectP1.setText(p1.getName() + " was stunned");
             stun = 0;
             labelEffectP2.setText(p2.getName() + " didn't attack");
         });
 
-        // Стан(-1) vs Атака(1) -> "-11"
+        // Стан vs Атака -> "-11"
         moveHandlers.put("-11", (p1, p2) -> {
             p1.setHealth(-p2.getDamage());
             labelEffectP1.setText(p1.getName() + " was stunned");
@@ -94,7 +94,7 @@ public class Fight {
             labelEffectP2.setText(p2.getName() + " attacked");
         });
 
-        // Ослабление(2) vs Защита(0) -> "20"
+        // Ослабление vs Защита -> "20"
         BiConsumer<Player, Player> weakenVsDefend = (p1, p2) -> {
             if (Math.random() < 0.75) {
                 p2.setWeakness(p1.getLevel());
@@ -105,45 +105,45 @@ public class Fight {
             }
         };
         moveHandlers.put("20", weakenVsDefend);
-        moveHandlers.put("2-1", weakenVsDefend); // Дублируем для case "2-1"
+        moveHandlers.put("2-1", weakenVsDefend);
 
-        // Атака(1) vs Ослабление(2) -> "12"
+        // Атака vs Ослабление -> "12"
         moveHandlers.put("12", (p1, p2) -> {
             p2.setHealth(-p1.getDamage() * 1.15);
             labelEffectP1.setText(p1.getName() + " attacked");
             labelEffectP2.setText("Failed to weak opponent");
         });
         
-        // Ослабление(2) vs Атака(1) -> "21"
+        // Ослабление vs Атака -> "21"
         moveHandlers.put("21", (p1, p2) -> {
             p1.setHealth(-p2.getDamage() * 1.15);
             labelEffectP1.setText(p1.getName() + " attacked");
             labelEffectP2.setText("Failed to weak opponent");
         });
         
-        // Регенерация(3) vs Защита(0) -> "30"
+        // Регенерация vs Защита -> "30"
         BiConsumer<Player, Player> regenVsDefend = (p1, p2) -> {
             p1.setHealth((p1.getMaxHealth() - p1.getHealth()) * 0.5);
             labelEffectP1.setText(p1.getName() + " regenerated");
         };
         moveHandlers.put("30", regenVsDefend);
-        moveHandlers.put("3-1", regenVsDefend); // Дублируем для case "3-1"
+        moveHandlers.put("3-1", regenVsDefend); 
         
-        // Атака(1) vs Регенерация(3) -> "13"
+        // Атака vs Регенерация -> "13"
         moveHandlers.put("13", (p1, p2) -> {
             p2.setHealth(-p1.getDamage() * 2);
             labelEffectP1.setText(p1.getName() + " attacked");
             labelEffectP2.setText("Failed to regenerate");
         });
 
-        // Регенерация(3) vs Атака(1) -> "31"
+        // Регенерация vs Атака -> "31"
         moveHandlers.put("31", (p1, p2) -> {
             p1.setHealth(-p2.getDamage() * 2);
             labelEffectP2.setText(p2.getName() + " attacked");
             labelEffectP1.setText("Failed to regenerate");
         });
 
-        // Ослабление(2) vs Регенерация(3) -> "23"
+        // Ослабление vs Регенерация -> "23"
         moveHandlers.put("23", (p1, p2) -> {
             p2.setWeakness(p1.getLevel());
             p2.setHealth((p2.getMaxHealth() - p2.getHealth()) * 0.5);
@@ -151,7 +151,7 @@ public class Fight {
             labelEffectP2.setText(p2.getName() + " regenerated");
         });
         
-        // Регенерация(3) vs Ослабление(2) -> "32"
+        // Регенерация vs Ослабление -> "32"
         moveHandlers.put("32", (p1, p2) -> {
             p1.setWeakness(p2.getLevel());
             p1.setHealth((p1.getMaxHealth() - p1.getHealth()) * 0.5);
@@ -159,7 +159,7 @@ public class Fight {
             labelEffectP1.setText(p1.getName() + " regenerated");
         });
         
-        // Защита(0) vs Ослабление(2) -> "02"
+        // Защита vs Ослабление -> "02"
         moveHandlers.put("02", (p1, p2) -> {
             if (Math.random() < 0.75) {
                 p1.setWeakness(p1.getLevel());
@@ -177,13 +177,13 @@ public class Fight {
             }
         });
         
-        // Защита(0) vs Регенерация(3) -> "03"
+        // Защита vs Регенерация -> "03"
         moveHandlers.put("03", (p1, p2) -> {
             p2.setHealth((p2.getMaxHealth() - p2.getHealth()) * 0.5);
             labelEffectP2.setText(p2.getName() + " regenerated");
         });
         
-        // Стан(-1) vs Регенерация(3) -> "-13"
+        // Стан vs Регенерация -> "-13"
         moveHandlers.put("-13", (p1, p2) -> {
              p2.setHealth((p2.getMaxHealth() - p2.getHealth()) * 0.5);
              labelEffectP2.setText(p2.getName() + " regenerated");
