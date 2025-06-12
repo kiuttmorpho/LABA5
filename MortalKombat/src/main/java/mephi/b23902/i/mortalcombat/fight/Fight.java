@@ -25,10 +25,10 @@ public class Fight {
     private int[] kind_attack = {0};
     private final int[] experiences = {40, 90, 180, 260, 410};
     private final EnemyFabric fabric = new EnemyFabric();
-    public int i = 1;
-    private int k = -1;
+    public int turnCounter = 1;
+    private int enemyActionIndex = -1;
     private int stun = 0;
-    private double v = 0.0;
+    private double randomChanceValue = 0.0;
 
     private int locationsCount;
     private int currentLocationsCount = 0;
@@ -51,8 +51,8 @@ public class Fight {
     private void initializeMoveHandlers() {
         // Атака(1) vs Защита(0) -> "10"
         moveHandlers.put("10", (p1, p2) -> {
-            v = Math.random();
-            if (p1 instanceof ShaoKahn && v < 0.15) {
+            randomChanceValue = Math.random();
+            if (p1 instanceof ShaoKahn && randomChanceValue < 0.15) {
                 p2.setHealth(-(int) (p1.getDamage() * 0.5));
                 labelEffectP2.setText("Your block is broken");
             } else {
@@ -69,8 +69,8 @@ public class Fight {
 
         // Защита(0) vs Защита(0) -> "00"
         moveHandlers.put("00", (p1, p2) -> {
-            v = Math.random();
-            if (v <= 0.5) {
+            randomChanceValue = Math.random();
+            if (randomChanceValue <= 0.5) {
                 stun = 1; // Стан получает тот, чей ход следующий
             }
             labelEffectP2.setText("Both defended themselves");
@@ -228,11 +228,11 @@ public class Fight {
         label7.setText("");
         human.setAttack(a);
 
-        if (k < kind_attack.length - 1) {
-            k++;
+        if (enemyActionIndex < kind_attack.length - 1) {
+            enemyActionIndex++;
         } else {
             kind_attack = action.ChooseBehavior(enemy, action);
-            k = 0;
+            enemyActionIndex = 0;
         }
 
         if (enemy.isWizard() && Math.random() < 0.15) {
@@ -240,20 +240,20 @@ public class Fight {
         } else if (enemy.getName().equals("Shao Kahn") && Math.random() < 0.2) {
             enemy.setAttack(3); // 3 - РЕГЕНЕРАЦИЯ
         } else {
-            enemy.setAttack(kind_attack[k]);
+            enemy.setAttack(kind_attack[enemyActionIndex]);
         }
 
         human.removeWeakness();
         enemy.removeWeakness();
 
-        if (i % 2 == 1) {
+        if (turnCounter % 2 == 1) {
             Move(human, enemy, label7, label8);
         } else {
             Move(enemy, human, label8, label7);
         }
 
-        i++;
-        change.RoundTexts(human, enemy, label, label2, i, label6);
+        turnCounter++;
+        change.RoundTexts(human, enemy, label, label2, turnCounter, label6);
         action.HP(human, pr1);
         action.HP(enemy, pr2);
 
@@ -300,8 +300,8 @@ public class Fight {
         } else {
             label.setText(enemy.getName() + " win");
         }
-        i = 1;
-        k = -1;
+        turnCounter = 1;
+        enemyActionIndex = -1;
         kind_attack = ResetAttack();
     }
     
@@ -375,7 +375,6 @@ public class Fight {
     public void prepareLocationAndRounds() {
         if (currentLocationsCount < locationsCount) {
             currentLocationsCount++;
-            // Количество врагов в локации зависит от уровня игрока
             levelCount = (int) (Math.random() * 3) + human.getLevel() + 1;
         }
     }
