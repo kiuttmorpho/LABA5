@@ -901,7 +901,7 @@ public class JFrames extends javax.swing.JFrame {
         
                 game.change.NewRoundTexts(human, enemy, playerHPProgressBar, enemyHPProgressBar, 
                 pointCountLabe, expCountLabel, playerLevel, enemyLevel, hpPoints,enemyHPPoints, damageCountLabel,
-                effectLabel, informationLabel, game.fight.i, items, jRadioButton1, jRadioButton2, jRadioButton3);
+                effectLabel, informationLabel, game.fight.turnCounter, items, jRadioButton1, jRadioButton2, jRadioButton3);
         
                 checkAndDisableButtons() ;
                 locationLable.setText("Локация №"+game.getFight().getCurrentLocationsCount());
@@ -1011,7 +1011,7 @@ public class JFrames extends javax.swing.JFrame {
             enemy = game.NewEnemy(enemyPicture, enemyName, enemyDamageCount,enemyHPPoints, enemyHPProgressBar);
             game.change.NewRoundTexts(human, enemy, playerHPProgressBar, enemyHPProgressBar, 
                     pointCountLabe, expCountLabel, playerLevel, enemyLevel, hpPoints,enemyHPPoints, damageCountLabel,
-                    effectLabel, informationLabel, game.fight.i, items, jRadioButton1, jRadioButton2, jRadioButton3);
+                    effectLabel, informationLabel, game.fight.turnCounter, items, jRadioButton1, jRadioButton2, jRadioButton3);
            
            
            
