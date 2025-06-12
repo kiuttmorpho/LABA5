@@ -54,10 +54,12 @@ public class Fight {
                     l2.setText(p2.getName() + " counterattacked");
                 }
                 break;
+                
             case "11":
                 p2.setHealth(-p1.getDamage());
                 l2.setText(p1.getName() + " attacked");
                 break;
+                
             case "00":
                 v = Math.random();
                 if (v <= 0.5) {
@@ -65,20 +67,24 @@ public class Fight {
                 }
                 l2.setText("Both defended themselves");
                 break;
+                
             case "01":
                 l2.setText(p1.getName() + " didn't attacked");
                 break;
+                
             case "-10":
                 l.setText(p1.getName() + " was stunned");
                 stun = 0;
                 l2.setText(p2.getName() + " didn't attacked");
                 break;
+                
             case "-11":
                 p1.setHealth(-p2.getDamage());
                 l.setText(p1.getName() + " was stunned");
                 stun = 0;
                 l2.setText(p2.getName() + " attacked");
                 break;
+                
             case "20":
             case  "2-1":
                     if (Math.random() < 0.75){
@@ -86,6 +92,7 @@ public class Fight {
                             l.setText(p1.getName() + "used Weakness");
                             l2.setText(p2.getName() + " are weakened");}
                     break;
+                    
             case "02" :
             case "-12":
                  if (Math.random() < 0.75){
@@ -93,42 +100,50 @@ public class Fight {
                         l2.setText(p2.getName() + "used Weakness");
                         l.setText(p1.getName() + " are weakened"); }
                  break;
+                 
             case "12":
                        p2.setHealth(-p1.getDamage() * 1.15);
                         l.setText(p1.getName() + " attacked");
                         l2.setText("Failed to weak oppponent");
                     break;
+                    
             case "21":
                      p1.setHealth(-p2.getDamage() * 1.15);
                         l.setText(p1.getName() + " attacked");
                         l.setText("Failed to weak oppponent");
                      break;
+                     
             case  "30" :
             case  "3-1":
               p1.setHealth((p1.getMaxHealth()-p1.getHealth())*0.5);
                 l.setText( p1.getName() + " regenerated");
                 break;
+                
            case  "03" :
            case  "-13":     
                 p2.setHealth((p2.getMaxHealth()-p2.getHealth())* 0.5);
                 l2.setText( p2.getName() + " regenerated");
                 break;
+                
            case "13":
                p2.setHealth(-p1.getDamage() * 2);
                 l.setText(p1.getName() + " attacked");
                 l2.setText("Failed to regenerate");
                 break;
+                
            case "31":
                 p1.setHealth(-p2.getDamage() * 2);
                 l2.setText(p2.getName() + " attacked");
                 l.setText("Failed to regenerate");
                 break;
+                
            case "23":
                p2.setWeakness(p1.getLevel());
               p2.setHealth((p2.getMaxHealth()-p2.getHealth())* 0.5);
                l.setText(p1.getName() + " used Weakness");
                l2.setText(p2.getName() + " regenerated");
                break;
+               
            case  "32":
                p1.setWeakness(p2.getLevel());
                p1.setHealth((p1.getMaxHealth()-p1.getHealth())*0.5);
