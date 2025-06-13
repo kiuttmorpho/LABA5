@@ -236,9 +236,9 @@ public class Fight {
         }
 
         if (enemy.isWizard() && Math.random() < 0.15) {
-            enemy.setAttack(2); // 2 - ОСЛАБЛЕНИЕ
+            enemy.setAttack(2);
         } else if (enemy.getName().equals("Shao Kahn") && Math.random() < 0.2) {
-            enemy.setAttack(3); // 3 - РЕГЕНЕРАЦИЯ
+            enemy.setAttack(3);
         } else {
             enemy.setAttack(kind_attack[enemyActionIndex]);
         }
@@ -286,10 +286,10 @@ public class Fight {
             ((Human) human).setWin();
 
             if (enemy instanceof ShaoKahn) {
-                action.AddItems(38, 23, 8, items);
+                action.AddItems(38, 52, 10, items);
                 action.AddPointsBoss(((Human) human), action.getEnemyes());
             } else {
-                action.AddItems(25, 15, 5, items);
+                action.AddItems(38, 52, 10, items);
                 boolean isLevelUp = action.AddPoints(((Human) human), action.getEnemyes());
                 if (isLevelUp) {
                     optionBox.setSelectedIndex(0);

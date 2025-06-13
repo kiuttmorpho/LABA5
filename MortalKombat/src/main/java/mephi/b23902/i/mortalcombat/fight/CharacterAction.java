@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package mephi.b23902.i.mortalcombat.fight;
 
 import javax.swing.ImageIcon;
@@ -18,27 +15,19 @@ import mephi.b23902.i.mortalcombat.player.Human;
 import mephi.b23902.i.mortalcombat.player.Items;
 import mephi.b23902.i.mortalcombat.player.Player;
 
-/**
- * Класс, управляющий основными игровыми механиками и поведением персонажей.
- * Отвечает за выбор противников, их поведение, систему уровней и использование предметов.
- */
 public class CharacterAction {
 
-    private int experience_for_next_level = 40;
+    private  int experience_for_next_level = 40;
     
-    /** 
-     * Матрица возможных типов атак противников.
-     * Каждый подмассив представляет набор возможных атак для определенного типа поведения.
-     */
+
     private final int kind_fight[][] = {{1, 0}, {1, 1, 0}, {0, 1, 0}, {1, 1, 1, 1}};
 
     private Player enemyes[] = new Player[6];
-    private EnemyFabric fabric = new EnemyFabric();
+
+    EnemyFabric fabric = new EnemyFabric();
+
     private Player enemyy = null;
 
-    /**
-     * Инициализирует массив противников с помощью фабрики.
-     */
     public void setEnemyes() {
         enemyes[0] = fabric.create(0, 0);
         enemyes[1] = fabric.create(1, 0);
@@ -48,24 +37,13 @@ public class CharacterAction {
         enemyes[5] = fabric.create(4, 0);
     }
 
-    /**
-     * Возвращает массив противников.
-     * @return массив объектов Player, представляющих противников
-     */
     public Player[] getEnemyes() {
         return this.enemyes;
     }
 
-    /**
-     * Выбирает случайного противника и обновляет GUI.
-     * @param label метка для изображения противника
-     * @param label2 метка для имени противника
-     * @param text метка для урона противника
-     * @param label3 метка для здоровья противника
-     * @return выбранный противник
-     */
     public Player ChooseEnemy(JLabel label, JLabel label2, JLabel text, JLabel label3) {
         int i = (int) (Math.random() * 4);
+        ImageIcon icon1 = null;
         switch (i) {
             case 0:
                 enemyy = enemyes[0];
@@ -78,6 +56,7 @@ public class CharacterAction {
                 break;
             case 3:
                 enemyy = enemyes[3];
+
                 break;
         }
         label.setIcon(enemyy.getPicture());
@@ -87,23 +66,14 @@ public class CharacterAction {
         return enemyy;
     }
 
-    /**
-     * Выбирает босса (Shao Kahn) и настраивает его параметры в зависимости от уровня игрока.
-     * @param label метка для изображения босса
-     * @param label2 метка для имени босса
-     * @param text метка для урона босса
-     * @param label3 метка для здоровья босса
-     * @param i параметр для настройки (не используется)
-     * @param human объект игрока
-     * @return выбранный босс
-     */
     public Player ChooseBoss(JLabel label, JLabel label2, JLabel text, JLabel label3, int i, Player human) {
+
         label2.setText("Shao Kahn - БОСС");
         enemyy = enemyes[4];
         for(int j=0; j<human.getLevel() - enemyy.getLevel() + 2; i++) {
             enemyy.setLevel();
         }
-        enemyy.setDamage(enemyy.getLevel());
+        enemyy.setDamage( enemyy.getLevel());
         enemyy.setMaxHealth(5 * enemyy.getLevel());
         enemyy.setHealth(enemyy.getMaxHealth() - enemyy.getHealth());
         System.out.println("health: " + enemyy.getHealth());
@@ -113,16 +83,6 @@ public class CharacterAction {
         return enemyy;
     }
 
-    /**
-     * Определяет поведение противника на основе случайного числа и вероятностей.
-     * @param k1 вероятность первого типа поведения
-     * @param k2 вероятность второго типа поведения
-     * @param k3 вероятность третьего типа поведения
-     * @param k4 вероятность четвертого типа поведения
-     * @param i случайное число (0-1)
-     * @param isWizard является ли противник магом
-     * @return массив, представляющий последовательность атак
-     */
     public int[] EnemyBehavior(int k1, int k2, int k3, int k4, double i, Boolean isWizard) {
         int arr[] = null;
         if (i < k1 * 0.01) {
@@ -140,12 +100,6 @@ public class CharacterAction {
         return arr;
     }
 
-    /**
-     * Выбирает поведение для конкретного типа противника.
-     * @param enemy противник
-     * @param action экземпляр CharacterAction
-     * @return массив, представляющий последовательность атак
-     */
     public int[] ChooseBehavior(Player enemy, CharacterAction action) {
         int arr[] = null;
         double i = Math.random();
@@ -167,12 +121,8 @@ public class CharacterAction {
         return arr;
     }
 
-    /**
-     * Обновляет прогресс-бар здоровья игрока или противника.
-     * @param player игрок или противник
-     * @param progress прогресс-бар для обновления
-     */
     public void HP(Player player, JProgressBar progress) {
+
         if (player.getHealth() >= 0) {
             progress.setValue(player.getHealth());
         } else {
@@ -180,19 +130,10 @@ public class CharacterAction {
         }
     }
     
-    /**
-     * Метод для использования слабости (заглушка).
-     */
     public void useWeakness() {
-        // Реализация будет добавлена позже
+        
     }
 
-    /**
-     * Добавляет очки опыта и проверяет повышение уровня.
-     * @param human игрок
-     * @param enemyes массив противников
-     * @return true, если уровень повышен, иначе false
-     */
     public Boolean AddPoints(Human human, Player[] enemyes) {
         switch (human.getLevel()) {
             case 0:
@@ -217,27 +158,24 @@ public class CharacterAction {
                 break;
         }
         Boolean isLevelUp = false;
-        System.out.println(experience_for_next_level + " и " +  human.getExperience());
-        
-        if (experience_for_next_level <= human.getExperience()) {   
-            human.setLevel();
-            isLevelUp = true;
-            experience_for_next_level += human.getExperience();
-            human.setNextExperience(experience_for_next_level);
-            NewHealthHuman(human);
-            for (int j = 0; j < 4; j++) {
-                NewHealthEnemy(enemyes[j], human);
+            System.out.println(experience_for_next_level + " и " +  human.getExperience());
+            
+            if (experience_for_next_level <= human.getExperience()) {   
+                
+                human.setLevel();
+                isLevelUp = true;
+                experience_for_next_level += human.getExperience();
+                human.setNextExperience(experience_for_next_level);
+                NewHealthHuman(human);
+                for (int j = 0; j < 4; j++) {
+                    NewHealthEnemy(enemyes[j], human);
+                }
+                
             }
-        }
         
         return isLevelUp;
     }
 
-    /**
-     * Добавляет очки после победы над боссом.
-     * @param human игрок
-     * @param enemyes массив противников
-     */
     public void AddPointsBoss(Human human, Player[] enemyes) {
         switch (human.getLevel()) {
             case 2:
@@ -249,26 +187,22 @@ public class CharacterAction {
                 human.setPoints(65 + human.getHealth() / 2);
                 break;
         }
-        if (experience_for_next_level <= human.getExperience()) {
-            human.setLevel();
-            experience_for_next_level += human.getExperience();
-            human.setNextExperience(experience_for_next_level);
-            NewHealthHuman(human);
-            for (int j = 0; j < 4; j++) {
-                NewHealthEnemy(enemyes[j], human);
+            if (experience_for_next_level <= human.getExperience()) {
+                human.setLevel();
+                
+                experience_for_next_level += human.getExperience();
+                human.setNextExperience(experience_for_next_level);
+                NewHealthHuman(human);
+                for (int j = 0; j < 4; j++) {
+                    NewHealthEnemy(enemyes[j], human);
+                }
             }
-        }
+        
     }
 
-    /**
-     * Добавляет предметы в инвентарь на основе вероятностей.
-     * @param k1 вероятность получения первого предмета
-     * @param k2 вероятность получения второго предмета
-     * @param k3 вероятность получения третьего предмета
-     * @param items массив предметов
-     */
     public void AddItems(int k1, int k2, int k3, Items[] items) {
         double i = Math.random();
+    
         if (i < k1 * 0.01) {
             items[0].setCount(1);
         }
@@ -280,10 +214,6 @@ public class CharacterAction {
         }
     }
 
-    /**
-     * Обновляет параметры здоровья и урона игрока при повышении уровня.
-     * @param human игрок
-     */
     public void NewHealthHuman(Human human) {
         int hp = 0;
         int damage = 0;
@@ -309,11 +239,6 @@ public class CharacterAction {
         human.setDamage(damage);
     }
 
-    /**
-     * Обновляет параметры противников при повышении уровня игрока.
-     * @param enemy противник
-     * @param human игрок
-     */
     public void NewHealthEnemy(Player enemy, Human human) {
         int hp = 0;
         int damage = 0;
@@ -340,14 +265,6 @@ public class CharacterAction {
         enemy.setLevel();
     }
 
-    /**
-     * Использует предмет из инвентаря.
-     * @param human игрок
-     * @param items массив предметов
-     * @param name имя предмета
-     * @param dialog диалоговое окно для сообщений
-     * @param dialog1 дополнительное диалоговое окно
-     */
     public void UseItem(Player human, Items[] items, String name, JDialog dialog, JDialog dialog1) {
         switch (name) {
             case "jRadioButton1":
@@ -369,8 +286,12 @@ public class CharacterAction {
                 }
                 break;
             case "jRadioButton3":
-                dialog.setVisible(true);
-                dialog.setBounds(300, 200, 400, 300);
+                if (items[2].getCount() > 0) {
+                    human.setNewHealth((int) (human.getMaxHealth() * 0.05));
+                    items[2].setCount(-1); 
+                } else {
+                    dialog.setVisible(true);
+                }
                 break;
         }
         
