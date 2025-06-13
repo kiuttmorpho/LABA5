@@ -24,7 +24,10 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-
+/**
+ * Основной класс игры, управляющий игровым процессом, персонажами и результатами.
+ * Обеспечивает взаимодействие между игроком, противниками и системой боя.
+ */
 public class Game {
 
     CharacterAction action = new CharacterAction();
@@ -32,6 +35,16 @@ public class Game {
     Fight fight = new Fight();
     private ArrayList<Result> results = new ArrayList<>();
 
+    /**
+     * Создает нового противника для игры.
+     * 
+     * @param L1 JLabel для отображения имени противника
+     * @param L2 JLabel для отображения силы противника
+     * @param L3 JLabel для отображения ловкости противника
+     * @param L4 JLabel для отображения интеллекта противника
+     * @param pr2 JProgressBar для отображения здоровья противника
+     * @return созданный объект противника (Player)
+     */
     public Player NewEnemy(JLabel L1, JLabel L2,
             JLabel L3, JLabel L4, JProgressBar pr2) {
         action.setEnemyes();
@@ -42,6 +55,12 @@ public class Game {
         return enemy;
     }
     
+    /**
+     * Создает нового игрока-человека.
+     * 
+     * @param pr1 JProgressBar для отображения здоровья игрока
+     * @return созданный объект игрока (Human)
+     */
     public Human NewHuman(JProgressBar pr1){
         Human human = new Human (1,80,16,1);
         action.HP(human, pr1);
@@ -50,6 +69,14 @@ public class Game {
         return human;
     }
 
+    /**
+     * Завершает игру, сохраняя результаты и обновляя таблицу лидеров.
+     * 
+     * @param human объект игрока
+     * @param text JTextField с именем игрока
+     * @param table JTable для отображения таблицы лидеров
+     * @throws IOException если возникает ошибка ввода-вывода при сохранении
+     */
     public void EndGameTop(Human human, JTextField text, JTable table) throws IOException {
         results.add(new Result(text.getText(), human.getPoints()));
         results.sort(Comparator.comparing(Result::getPoints).reversed());
@@ -58,6 +85,11 @@ public class Game {
         this.fight.resetCurrentLocationsCount();
     }
     
+    /**
+     * Записывает результаты топ-10 игроков в файл Excel.
+     * 
+     * @throws IOException если возникает ошибка ввода-вывода при записи
+     */
     public void WriteToExcel() throws IOException{
         XSSFWorkbook book = new XSSFWorkbook();
         XSSFSheet sheet = book.createSheet("Результаты ТОП 10");
@@ -75,18 +107,31 @@ public class Game {
         }
         File f = new File("Results.xlsx");
         book.write(new FileOutputStream(f));
-        
     }
     
+    /**
+     * Возвращает объект боя.
+     * 
+     * @return объект Fight
+     */
     public Fight getFight() {
         return fight;
     }
     
-
+    /**
+     * Возвращает список результатов игроков.
+     * 
+     * @return ArrayList объектов Result
+     */
     public ArrayList<Result> getResults(){
         return this.results;
     }
 
+    /**
+     * Читает результаты игроков из файла Excel.
+     * 
+     * @throws IOException если возникает ошибка ввода-вывода при чтении
+     */
     public void ReadFromExcel() throws IOException{
         FileInputStream inputStream = new FileInputStream(new  File("Results.xlsx"));
         XSSFWorkbook book = new XSSFWorkbook(inputStream);
@@ -94,10 +139,14 @@ public class Game {
         for (int i=1; i<=sh.getLastRowNum();i++) {
             results.add(new Result(sh.getRow(i).getCell(1).getStringCellValue(),(int)sh.getRow(i).getCell(2).getNumericCellValue()));
         }
-       
         inputStream.close();
     }
     
+    /**
+     * Записывает результаты в таблицу для отображения.
+     * 
+     * @param table JTable для отображения результатов
+     */
     public void WriteToTable(JTable table){
         DefaultTableModel model = (DefaultTableModel)table.getModel();
         for (int i=0; i<results.size();i++){

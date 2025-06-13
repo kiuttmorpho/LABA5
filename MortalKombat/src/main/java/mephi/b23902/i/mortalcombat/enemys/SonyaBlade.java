@@ -1,22 +1,34 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package mephi.b23902.i.mortalcombat.enemys;
 
 import mephi.b23902.i.mortalcombat.player.Player;
 import javax.swing.ImageIcon;
 
-
-public class SonyaBlade extends Player{
+/**
+ * Класс, представляющий персонажа Sonya Blade в игре Mortal Kombat.
+ * Наследуется от базового класса Player.
+ */
+public class SonyaBlade extends Player {
     
-    public SonyaBlade (int level, int health, int  damage, int attack){
-        super (level, health, damage, attack);
+    /**
+     * Конструктор для создания экземпляра Sonya Blade.
+     * 
+     * @param level уровень персонажа
+     * @param health количество здоровья
+     * @param damage наносимый урон
+     * @param attack сила атаки
+     */
+    public SonyaBlade(int level, int health, int damage, int attack) {
+        super(level, health, damage, attack);
         picture = new ImageIcon(this.getClass().getResource("/SonyaBlade.png"));
     }
     
+    /**
+     * Возвращает имя персонажа.
+     * 
+     * @return строку с именем персонажа "Sonya Blade"
+     */
     @Override
-    public String getName(){
+    public String getName() {
         return "Sonya Blade";
     }
 }
